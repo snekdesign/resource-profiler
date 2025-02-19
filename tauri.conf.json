@@ -1,0 +1,23 @@
+{
+    "identifier": "resource-profiler",
+    "app": {
+        "windows": [
+            {
+                "title": "Tauri",
+                "width": 960,
+                "height": 600,
+                "center": true,
+                "resizable": false
+            }
+        ]
+    },
+    "bundle": {
+        "active": true,
+        "icon": [
+            "icons/32x32.png",
+            "icons/128x128.png",
+            "icons/128x128@2x.png",
+            "icons/icon.ico"
+        ]
+    }
+}

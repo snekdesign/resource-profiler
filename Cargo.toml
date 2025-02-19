@@ -1,0 +1,23 @@
+[package]
+name = 'resource-profiler'
+version = '0.1.0'
+edition = '2021'
+
+[lib]
+name = 'tauri'
+crate-type = ['staticlib']
+
+[dependencies]
+tauri = { git = 'https://github.com/thomaseizinger/tauri', branch = 'feat/introduce-run-return' }
+tauri-utils = { git = 'https://github.com/thomaseizinger/tauri', branch = 'feat/introduce-run-return' }
+url = '2.5.4'
+
+[build-dependencies]
+tauri-build = { git = 'https://github.com/thomaseizinger/tauri', branch = 'feat/introduce-run-return' }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = 'abort'
+strip = true

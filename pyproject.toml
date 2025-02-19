@@ -1,0 +1,165 @@
+[build-system]
+requires = []
+build-backend = 'hatchling.build'
+
+[project]
+name = 'resource-profiler'
+version = '0.1.0'
+description = 'Dask resource profiler for subprocess'
+readme = 'README.md'
+requires-python = '>=3.9'
+license = 'GPL-2.0-only'
+authors = [{ name = 'snekdesign' }]
+keywords = ['dask']
+classifiers = [
+    'Development Status :: 3 - Alpha',
+    'Environment :: Console',
+    'Framework :: Pydantic :: 2',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Education',
+    'Intended Audience :: System Administrators',
+    'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
+    'Operating System :: Microsoft :: Windows',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: Implementation :: CPython',
+    'Topic :: System :: Monitoring',
+    'Typing :: Typed',
+]
+scripts = { 'resource-profiler' = 'resource_profiler.__main__:main' }
+dynamic = ['dependencies']
+
+[project.optional-dependencies]
+cli = [
+    'pydantic-settings @ git+https://github.com/pydantic/pydantic-settings.git',
+    'rich-argparse >=1.6.0',
+]
+
+[project.urls]
+Homepage = 'https://github.com/snekdesign/resource-profiler'
+'Source Code' = 'https://github.com/snekdesign/resource-profiler'
+'Issue Tracker' = 'https://github.com/snekdesign/resource-profiler/issues'
+
+[tool.basedpyright]
+strict = [
+    'scripts/build_pyapp.py',
+    'src/resource_profiler/__init__.py',
+    'src/resource_profiler/__main__.py',
+]
+typeCheckingMode = 'basic'
+
+[tool.hatch.build.targets.wheel]
+exclude = [
+    'src/resource_profiler/__init__.pxd',
+    'src/resource_profiler/__init__.py',
+]
+
+[tool.hatch.build.targets.wheel.hooks.scikit-build]
+experimental = true
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ['requirements.txt']
+
+[tool.pixi.project]
+channels = ['conda-forge']
+platforms = ['win-64']
+
+[tool.pixi.pypi-options]
+index-url = 'https://mirrors.cernet.edu.cn/pypi/web/simple'
+
+[tool.pixi.environments.conda]
+features = ['conda']
+no-default-feature = true
+
+[tool.pixi.environments.wheel]
+features = ['wheel']
+
+[tool.pixi.environments.rust]
+features = ['rust']
+
+[tool.pixi.environments.typing]
+features = ['typing']
+
+[tool.pixi.feature.conda.tasks.build-conda]
+cmd = 'rattler-build build --experimental --no-include-recipe'
+depends-on = ['build-wheel']
+
+[tool.pixi.feature.wheel.tasks.build-wheel]
+cmd = 'pyproject-build -nw'
+depends-on = ['build-rust']
+inputs = [
+    'src/resource_profiler/__init__.pxd',
+    'src/resource_profiler/__init__.py',
+    'src/resource_profiler/__init__.pyi',
+    'src/resource_profiler/__main__.py',
+    'src/resource_profiler/py.typed',
+    'target/release/tauri.lib',
+    'CMakeLists.txt',
+    'pyproject.toml',
+    'README.md',
+    'requirements.txt',
+]
+outputs = ['dist/resource_profiler-*-cp39-abi3-*.whl']
+
+[tool.pixi.feature.rust.tasks.build-pyapp]
+cmd = 'python scripts/build_pyapp.py'
+depends-on = ['build-wheel']
+inputs = [
+    'dist/resource_profiler-*-cp39-abi3-*.whl',
+    'scripts/build_pyapp.py',
+    'pyproject.toml',
+]
+outputs = ['bin/resource-profiler*']
+
+[tool.pixi.feature.rust.tasks.build-rust]
+cmd = 'cargo build --locked --release'
+inputs = [
+    'icons/',
+    'src/lib.rs',
+    'build.rs',
+    'Cargo.toml',
+    'tauri.conf.json',
+]
+outputs = ['target/release/tauri.lib']
+
+[tool.pixi.feature.conda.dependencies]
+rattler-build = '>=0.35.0'
+
+[tool.pixi.feature.wheel.dependencies]
+cmake = '>=3.30.0'
+cython-cmake = '>=0.2.0'
+hatchling = '>=1.24.0'
+hatch-requirements-txt = '*'
+ninja = '>=1.11.0'
+python-build = '>=1.0.0'
+scikit-build-core = '>=0.9.0'
+
+[tool.pixi.feature.wheel.target.win-64.dependencies]
+mingw-w64-ucrt-x86_64-crt-git = '*'
+vs_win-64 = '>=2022.12.0'
+
+[tool.pixi.feature.wheel.pypi-dependencies]
+cython = '>=3.1.0a1'
+
+[tool.pixi.feature.rust.dependencies]
+rust = '==1.77.2'
+
+[tool.pixi.feature.typing.dependencies]
+bokeh = '>=2.4.2'
+cython = '*'
+dask-core = '>=2023.2.1'
+pydantic-settings = '>=2.7.1'
+rich-argparse = '>=1.6.0'
+
+[tool.scikit-build.cmake]
+args = ['-GNinja']
+
+[tool.scikit-build.wheel]
+py-api = 'cp39'

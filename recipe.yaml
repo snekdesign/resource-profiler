@@ -1,0 +1,38 @@
+context:
+  name: ${{ env.get("PIXI_PROJECT_NAME") }}
+  version: ${{ env.get("PIXI_PROJECT_VERSION") }}
+
+package:
+  name: ${{ name }}
+  version: ${{ version }}
+
+build:
+  number: 0
+  script: python -m pip install -f ${{ env.get("PIXI_PROJECT_ROOT") }}/dist ${{ name }}
+  python:
+    entry_points:
+    - resource-profiler = resource_profiler.__main__:main
+    version_independent: true
+
+requirements:
+  host:
+  - pip
+  - python
+  - python-abi3 ==3.9
+  run:
+  - bokeh >=2.4.2
+  - dask-core >=2023.2.1
+  - psutil >=5.8.0
+  - typing-extensions >=4.4.0
+
+tests:
+- python:
+    imports:
+    - ${{ name | replace("-", "_") }}
+
+about:
+  homepage: ${{ load_from_file("pyproject.toml").project.urls.Homepage }}
+  license: ${{ load_from_file("pyproject.toml").project.license }}
+  license_file: LICENSE
+  summary: ${{ load_from_file("pyproject.toml").project.description }}
+  repository: ${{ load_from_file("pyproject.toml").project.urls.Homepage }}
