@@ -35,7 +35,7 @@ dynamic = ['dependencies']
 
 [project.optional-dependencies]
 cli = [
-    'pydantic-settings @ git+https://github.com/pydantic/pydantic-settings.git',
+    'pydantic-settings >=2.8.0',
     'rich-argparse >=1.6.0',
 ]
 
