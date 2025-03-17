@@ -15,6 +15,5 @@ pub extern "C" fn tauri_open(url: *const c_char) {
     tauri::Builder::default()
         .build(context)
         .unwrap()
-        .run_return(|_app_handle, _event| {})
-        .unwrap();
+        .run_return(|_app_handle, _event| {});
 }
