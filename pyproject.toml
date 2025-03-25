@@ -71,9 +71,6 @@ files = ['requirements.txt']
 channels = ['conda-forge']
 platforms = ['win-64']
 
-[tool.pixi.pypi-options]
-index-url = 'https://mirrors.cernet.edu.cn/pypi/web/simple'
-
 [tool.pixi.environments.conda]
 features = ['conda']
 no-default-feature = true
